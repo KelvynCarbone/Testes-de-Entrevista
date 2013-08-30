@@ -1,0 +1,26 @@
+<?php
+
+class Arquivo 
+	{
+	 //Variável privada
+	 private $conteudo;
+	 
+	 //Função que retorna o conteudo
+	 function Conteudo() 
+		{
+		//Retorna o conteúdo
+		return htmlentities($this->conteudo);
+		}
+	 //Lê o Arquivo
+	 function LerArquivo($arquivo) 
+		{
+		//
+		$this->conteudo = file_get_contents($arquivo);
+		}
+	}
+	
+$arquivo= New Arquivo();
+
+$arquivo->LerArquivo("./texto.txt");
+print $arquivo->Conteudo();
+?>

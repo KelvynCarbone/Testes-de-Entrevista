@@ -1,0 +1,35 @@
+<?php
+/*Função que gera 6 números de 1 à 60 aleatóriamente e ordenados.*/
+function Megasena()
+	{
+	/*Inicia o array vazio.*/
+	$valores = array();
+
+	/*Inicia contador em zero para os 6 numeros que irão ser exibidos.*/
+	$i = 0;
+	
+	/*While fazer o processo 6 vezes*/
+	while( $i <= 5 ) 
+		{
+		/*Pega os números aleatórios de 1 à 60.*/
+		$numero = rand( 1,60 );
+		
+		/*Se o número não existir numero dentro do array ele põe.*/
+		if( ! in_array( $numero,$valores ) )
+			{
+			/*Seta o valor dentro do array*/
+			$valores[] = $numero;
+			++$i;
+			}
+		}
+	/*Orderna  os números*/
+	sort( $valores );
+	
+	/*Retorna os números*/
+	return $valores;
+	}
+
+/*Executa a Função*/
+print_r (Megasena());
+
+?>
