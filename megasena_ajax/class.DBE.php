@@ -30,7 +30,7 @@ date_default_timezone_set('America/Sao_Paulo');
         private $host = "localhost";
         private $user = "root";
         private $pass = "";
-        private $dbname = "acasadasquesto";
+        private $dbname = "";
         private $dbh;
         private $error;
         private $result;
