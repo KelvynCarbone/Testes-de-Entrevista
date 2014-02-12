@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 /**
  * 
  * Classe de manipulação PDO: 
@@ -10,42 +10,60 @@
  *
  * @name DBE
  * @author Kelvyn Indicatti Carbone (http://kelvyncarbone.tumblr.com)
- */	
+ */
+header('Content-Type: text/html; charset=UTF-8');
+date_default_timezone_set('America/Sao_Paulo');
+
     class DBE
 	{
 
-        private $host = "localhost";
-	private $user = "root";
+	private $host = "";
+	private $user = "acasadasquesto";
 	private $pass = "";
 	private $dbname = "";
 	private $dbh;
 	private $error;
 	private $result;
-        
-        /**
-         * REABRE a conex�o ao banco de dados
-         *
-         */
-         
-	//Construct da classe para poder instanciar	 
-        public function __construct()
+
+    /*
+     *
+        private $host = "localhost";
+        private $user = "root";
+        private $pass = "";
+        private $dbname = "acasadasquesto";
+        private $dbh;
+        private $error;
+        private $result;
+     */
+
+	/**
+	 * REABRE a conex�o ao banco de dados
+	 *
+	 */
+
+		//Construct da classe para poder instanciar	 
+	public function __construct()
 		{
 		// Set DSN
-		$dsn = 'mysql:host=' . $this->host . ';dbname=' . $this->dbname.";charset=utf8";
+		$dsn = 'mysql:host=' . $this->host . ';dbname=' . $this->dbname.'; charset=utf8';
 		// Set options
 		$options = array(
-		PDO::ATTR_PERSISTENT    => true,
+		PDO::ATTR_PERSISTENT    => false,
 		PDO::ATTR_ERRMODE       => PDO::ERRMODE_EXCEPTION
 		);
-		// Create a new PDO instanace
+		//Instancia o PDO
 		try
 			{
 			$this->dbh = new PDO($dsn, $this->user, $this->pass, $options);
 			}
-		// Catch any errors
 		catch(PDOException $e)
 			{
 			$this->error = $e->getMessage();
+			$this->error = str_replace("\n","",$this->error);
+			$this->error = str_replace('"',"'",$this->error);
+			print "<script> alert(\"".$this->error."\"); </script>";
+			//print "<script> alert('Ocorreu um erro ao conectar no banco de dados'); </script>";
+			exit;
 			}
 		}
 	//Função que executa as query
@@ -54,42 +72,140 @@
 		//Verifica o tipo transição, de acordo com a mesma ele escolhe o tipo de ação
 		if(strpos(strtolower($query),"select")!==false)
 			{
-			$this->result=$this->dbh->query($query);
+			try
+				{
+				$this->result=$this->dbh->prepare($query);
+				$this->result->execute();
+				}
+			catch(PDOException $e)
+				{
+				$this->error = $e->getMessage();
+				$this->error = str_replace("\n","",$this->error);
+				$this->error = str_replace('"',"'",$this->error);
+				print "<script> alert(\"".$this->error."\"); </script>";
+				//return print "Ocorreu um erro ao executar a query!";
+				exit;
+				}
 			}
 		else
 			{
-			$this->result = $this->dbh->exec($query);
+			try
+				{
+				$this->result=$this->dbh->prepare($query);
+				$this->result=$this->result->execute();
+				$this->dbh=null; //Fecha a conexão
+				}
+			// Catch any errors - como é insert se não fez, faz um rollback
+			catch(PDOException $e)
+				{
+				$this->error = $e->getMessage();
+				$this->error = str_replace("\n","",$this->error);
+				$this->error = str_replace('"',"'",$this->error);
+				print "<script> alert(\"".$this->error."\"); </script>";
+				//return print "Ocorreu um erro ao executar a query!";
+				exit;
+				}
 			}
 		}
-		
+
 	//Função que executa as query
 	public function Rows()
 		{
-		$this->result->execute();
-		return $this->result->rowCount();
-		}
-	//Faz um fetch obj
-	public function Fetch($tipo)
-		{
-		if(!$tipo)
+		try
 			{
-			return $this->result->fetch(PDO::FETCH_OBJ);
+			return $this->result->rowCount();
+            $this->dbh=null;
+			}
+		catch(PDOException $e)
+			{
+			$this->error = $e->getMessage();
+			$this->error = str_replace("\n","",$this->error);
+			$this->error = str_replace('"',"'",$this->error);
+			print "<script> alert(\"".$this->error."\"); </script>";
+			//print "<script> alert('Ocorreu um erro ao executar o Fetch[1]'); </script>";
+			exit;
+			}
+	
+		}
+		
+	//Faz um fetch obj
+	public function Fetch($tipo=null)
+		{
+		if(isset($tipo))
+			{
+			try
+				{
+				return $this->result->fetch($tipo);
+				$this->dbh=null;
+				}
+			catch(PDOException $e)
+				{
+				$this->error = $e->getMessage();
+				$this->error = str_replace("\n","",$this->error);
+				$this->error = str_replace('"',"'",$this->error);
+				print "<script> alert(\"".$this->error."\"); </script>";
+				//print "<script> alert('Ocorreu um erro ao executar o Fetch[1]'); </script>";
+				exit;
+				}
 			}
 		else
 			{
-			return $this->result->fetch($tipo);
+			try
+				{
+				return $this->result->fetch(PDO::FETCH_OBJ);
+				$this->dbh=null;
+				}
+			catch(PDOException $e)
+				{
+				$this->error = $e->getMessage();
+				$this->error = str_replace("\n","",$this->error);
+				$this->error = str_replace('"',"'",$this->error);
+				print "<script> alert(\"".$this->error."\"); </script>";
+				//print "<script> alert('Ocorreu um erro ao executar o Fetch[1]'); </script>";
+				exit;
+				}
 			}
 		}
+		
 	//Retorna o ultimo id inserido após query	
 	public function LastId()
 		{
-		return $this->dbh->lastInsertId();
+		try
+			{
+			return $this->dbh->lastInsertId();
+            $this->dbh=null;
+			}
+		// Catch any errors
+		catch(PDOException $e)
+			{
+			$this->error = $e->getMessage();
+			$this->error = str_replace("\n","",$this->error);
+			$this->error = str_replace('"',"'",$this->error);
+			print "<script> alert(\"".$this->error."\"); </script>";
+			//print "<script> alert('Ocorreu um erro ao executar o LastId'); </script>";
+			exit;
+			}
 		}
+		
 	//Faz o rollback em caso de problema	
 	public function RollBack()
 		{
-		return $this->dbh->rollback();
+		try
+			{
+			return $this->dbh->rollback();
+			$this->dbh=null;
+			}
+		// Catch any errors
+		catch(PDOException $e)
+			{
+			$this->error = $e->getMessage();
+			$this->error = str_replace("\n","",$this->error);
+			$this->error = str_replace('"',"'",$this->error);
+			print "<script> alert(\"".$this->error."\"); </script>";
+			//print "<script> alert('Ocorreu um erro ao executar o Rollback'); </script>";
+			exit;
+			}
 		}
-		
+
 	}
 ?>
