@@ -18,7 +18,7 @@ date_default_timezone_set('America/Sao_Paulo');
 	{
 
 	private $host = "";
-	private $user = "acasadasquesto";
+	private $user = "";
 	private $pass = "";
 	private $dbname = "";
 	private $dbh;
