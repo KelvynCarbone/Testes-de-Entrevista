@@ -10,7 +10,5 @@ para trabalhar com o PDO, tem as funções básicas, aproveitem, não retirem os
 
 
 Agradeço,
-Kelvyn Carbone - Arquiteto de Soluções em TI.
-Contato: (51) 8440-9895
+Kelvyn Carbone - Software Engineer
 Email: kelvyn.carbone@gmail.com
-Portfólio: http://kelvyncarbone.tumblr.com
